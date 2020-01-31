@@ -13,16 +13,51 @@
 
 using namespace std;
 
+//Declarar una ventana
+GLFWwindow* window;
+
 float posXTriangulo = 0.0f, posYTriangulo = 0.0f;
+double tiempoActual, tiempoAnterior;
+double velocidadTriangulo = 0.5;
 
 void teclado_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	if ((action == GLFW_PRESS || action == GLFW_REPEAT) && key == GLFW_KEY_RIGHT) {
 		posXTriangulo += 0.01;
 	}
+	if ((action == GLFW_PRESS || action == GLFW_REPEAT) && key == GLFW_KEY_LEFT) {
+		posXTriangulo -= 0.01;
+	}
+	if ((action == GLFW_PRESS || action == GLFW_REPEAT) && key == GLFW_KEY_UP) {
+		posYTriangulo += 0.01;
+	}
+	if ((action == GLFW_PRESS || action == GLFW_REPEAT) && key == GLFW_KEY_DOWN) {
+		posYTriangulo -= 0.01;
+	}
 }
 
 void actualizar() {
 	//posXTriangulo += 0.00001;
+
+	tiempoActual = glfwGetTime();
+	double tiempoDiferencial = tiempoActual - tiempoAnterior;
+
+	int estadoDerecha = glfwGetKey(window, GLFW_KEY_RIGHT);
+	if (estadoDerecha == GLFW_PRESS) {
+		posXTriangulo += velocidadTriangulo * tiempoDiferencial;
+	}
+	int estadoIzquierda = glfwGetKey(window, GLFW_KEY_LEFT);
+	if (estadoIzquierda == GLFW_PRESS) {
+		posXTriangulo -= velocidadTriangulo * tiempoDiferencial;
+	}
+	int estadoArriba = glfwGetKey(window, GLFW_KEY_UP);
+	if (estadoArriba == GLFW_PRESS) {
+		posYTriangulo += velocidadTriangulo * tiempoDiferencial;
+	}
+	int estadoAbajo = glfwGetKey(window, GLFW_KEY_DOWN);
+	if (estadoAbajo == GLFW_PRESS) {
+		posYTriangulo -= velocidadTriangulo * tiempoDiferencial;
+	}
+	tiempoAnterior = tiempoActual;
 }
 
 void dibujar() {
@@ -43,8 +78,6 @@ void dibujar() {
 
 int main()
 {
-	//Declarar una ventana
-	GLFWwindow* window;
 
 	//Si no se pudo iniciar GLFW terminamos ejecucion
 	if (!glfwInit())
@@ -75,7 +108,10 @@ int main()
 	cout << "Version OpenGL: " << versionGL;
 
 	//Establecemos que con cada evento de teclado se llama a la funcion teclado_callback
-	glfwSetKeyCallback(window, teclado_callback);
+	//glfwSetKeyCallback(window, teclado_callback);
+
+	tiempoActual = glfwGetTime();
+	tiempoAnterior = tiempoActual;
 
 	//Ciclo de dibujo (Draw loop)
 	while (!glfwWindowShouldClose(window))
